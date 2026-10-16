@@ -1,8 +1,8 @@
 <%
 	String navUri = request.getRequestURI();
 	boolean navResults = navUri.endsWith("results.jsp");
-	boolean navAbout = navUri.endsWith("about.jsp");
-	boolean navHome = !navResults && !navAbout;
+	boolean navSample = navUri.endsWith("sample.jsp");
+	boolean navHome = !navResults && !navSample;
 %>
 <header class="topbar">
 	<div class="container topbar-inner">
@@ -13,7 +13,7 @@
 		<nav class="nav-links">
 			<a href="<%= request.getContextPath() %>/index.jsp" class="<%= navHome ? "active" : "" %>">Process Grades</a>
 			<a href="<%= request.getContextPath() %>/results.jsp" class="<%= navResults ? "active" : "" %>">Results</a>
-			<a href="<%= request.getContextPath() %>/about.jsp" class="<%= navAbout ? "active" : "" %>">How It Works</a>
+			<a href="<%= request.getContextPath() %>/sample.jsp" class="<%= navSample ? "active" : "" %>">Sample CSV</a>
 		</nav>
 	</div>
 </header>

@@ -6,10 +6,10 @@
 	String course = (String) request.getAttribute("course");
 	String roster = (String) request.getAttribute("roster");
 
-	// Letter grade scale shown in the side panel (same thresholds as GradeEvaluator)
+	// The school's grading system shown in the side panel
 	String[] letters = GradeEvaluator.LETTER_GRADES;
-	String[] ranges = { "97 - 100", "93 - 96.99", "90 - 92.99", "87 - 89.99", "83 - 86.99", "80 - 82.99",
-			"77 - 79.99", "73 - 76.99", "70 - 72.99", "60 - 69.99", "below 60" };
+	String[] grades = GradeEvaluator.NUMERIC_GRADES;
+	String[] ranges = GradeEvaluator.PERCENT_RANGES;
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -27,7 +27,7 @@
 	<section class="hero">
 		<h1>Automated Grade Processing</h1>
 		<p>Paste or upload a class roster with raw scores. GradeFlow computes every student's weighted
-			average, assigns a letter grade, attaches academic status, honors and remediation flags,
+			average, assigns a grade (1.00 - 5.00), attaches academic status, honors and remediation flags,
 			and compiles a complete class report.</p>
 		<div class="pipeline">
 			<span class="step"><b>1</b>Ingest roster</span><span class="arrow">&rarr;</span>
@@ -84,7 +84,7 @@
 				<div class="field">
 					<input type="file" id="rosterFile" name="rosterFile" accept=".csv,.txt">
 					<p class="hint">If a file is chosen it is used instead of the text box.
-						Get the <a href="<%= request.getContextPath() %>/sample-roster.csv" download>sample CSV file</a>.</p>
+						See the <a href="<%= request.getContextPath() %>/sample.jsp">Sample CSV</a> page for the format.</p>
 				</div>
 
 				<button type="submit" class="btn btn-primary btn-block">Process Grades</button>
@@ -104,17 +104,19 @@
 			</div>
 
 			<div class="card">
-				<h2>Letter Grade Scale</h2>
+				<h2>Grading System</h2>
 				<table class="simple-table">
+					<tr><th>Grade</th><th>Percent</th><th>Letter</th><th>Description</th></tr>
 					<% for (int i = 0; i < letters.length; i++) { %>
 					<tr>
+						<td><strong><%= grades[i] %></strong></td>
+						<td class="nowrap"><%= ranges[i] %></td>
 						<td><span class="badge <%= HtmlUtil.gradeClass(letters[i]) %>"><%= letters[i] %></span></td>
-						<td><%= ranges[i] %></td>
-						<td class="muted"><%= StatusRouter.statusFor(letters[i]) %></td>
+						<td class="muted"><%= StatusRouter.remarkFor(letters[i]) %></td>
 					</tr>
 					<% } %>
 				</table>
-				<p class="hint">Full rules are on the <a href="<%= request.getContextPath() %>/about.jsp">How It Works</a> page.</p>
+				<p class="hint">Passing grade: 3.00 (75%).</p>
 			</div>
 		</div>
 	</div>
@@ -127,7 +129,7 @@
 	var courseBox = document.getElementById("course");
 	var fileInput = document.getElementById("rosterFile");
 
-	document.getElementById("loadSample").addEventListener("click", function () {
+	function loadSample() {
 		fetch("<%= request.getContextPath() %>/sample-roster.csv")
 			.then(function (res) { return res.text(); })
 			.then(function (text) {
@@ -136,7 +138,13 @@
 					courseBox.value = "IT 201 - Section A";
 				}
 			});
-	});
+	}
+	document.getElementById("loadSample").addEventListener("click", loadSample);
+
+	// "Try It With This Sample" on the Sample CSV page opens this page with ?sample=1
+	if (new URLSearchParams(window.location.search).get("sample") === "1") {
+		loadSample();
+	}
 
 	document.getElementById("clearRoster").addEventListener("click", function () {
 		rosterBox.value = "";

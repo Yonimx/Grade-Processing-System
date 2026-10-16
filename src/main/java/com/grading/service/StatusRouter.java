@@ -5,8 +5,9 @@ import com.grading.model.Student;
 /**
  * STAGE 3 - State Routing.
  *
- * Uses switch statements on the letter grade to attach a tailored remark,
- * an academic status, an honors classification and a remediation flag.
+ * Uses switch statements on the letter grade to attach the school's
+ * description (remark), an academic status, an honors classification and
+ * a remediation flag.
  */
 public class StatusRouter {
 
@@ -14,8 +15,8 @@ public class StatusRouter {
 
 	// Honors are withheld if any single component is below this score
 	public static final double HONORS_MIN_COMPONENT = 85;
-	// Passing students with a component below this score are flagged for review
-	public static final double WEAK_COMPONENT = 70;
+	// Passing students with a component below this score (the passing mark) are flagged for review
+	public static final double WEAK_COMPONENT = 75;
 
 	public static void route(Student s) {
 		String letter = s.getLetterGrade();
@@ -27,7 +28,7 @@ public class StatusRouter {
 		String honors = honorsFor(letter);
 		boolean awarded = !honors.equals(NONE);
 		if (awarded && s.getLowestScore() < HONORS_MIN_COMPONENT) {
-			honors = "Withheld (a component is below " + (int) HONORS_MIN_COMPONENT + ")";
+			honors = "Withheld (score below " + (int) HONORS_MIN_COMPONENT + ")";
 			awarded = false;
 		}
 		s.setHonors(honors);
@@ -43,42 +44,34 @@ public class StatusRouter {
 		s.setNeedsRemediation(!remediation.equals(NONE));
 	}
 
-	/** Tailored feedback for every letter grade. */
+	/** The school's description for every letter grade. */
 	public static String remarkFor(String letter) {
 		String remark;
 		switch (letter) {
 			case "A+":
-				remark = "Outstanding - exceptional mastery of the course";
-				break;
 			case "A":
-				remark = "Excellent - strong command of all topics";
+				remark = "Excellent";
 				break;
 			case "A-":
-				remark = "Very good - consistently high performance";
-				break;
 			case "B+":
-				remark = "Good - solid understanding with minor gaps";
+				remark = "Very Good";
 				break;
 			case "B":
-				remark = "Good - meets expectations well";
-				break;
 			case "B-":
-				remark = "Above average - keep building consistency";
+				remark = "Good";
 				break;
 			case "C+":
-				remark = "Satisfactory - fair grasp of the material";
+				remark = "Fair";
 				break;
 			case "C":
-				remark = "Satisfactory - meets minimum expectations";
-				break;
 			case "C-":
-				remark = "Fair - needs to strengthen the fundamentals";
+				remark = "Passed";
 				break;
 			case "D":
-				remark = "Poor - significant gaps in understanding";
+				remark = "Conditional";
 				break;
 			case "F":
-				remark = "Failing - course requirements not met";
+				remark = "Failed";
 				break;
 			default:
 				remark = "No remark available";
@@ -104,7 +97,7 @@ public class StatusRouter {
 				status = "Academic Warning";
 				break;
 			case "D":
-				status = "Probation";
+				status = "Conditional";
 				break;
 			case "F":
 				status = "Failed";
@@ -142,7 +135,7 @@ public class StatusRouter {
 				remediation = "Tutorial sessions recommended";
 				break;
 			case "D":
-				remediation = "Remedial program required";
+				remediation = "Removal exam required";
 				break;
 			case "F":
 				remediation = "Must retake the course";

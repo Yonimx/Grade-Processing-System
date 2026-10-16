@@ -30,7 +30,7 @@ body {
 a { color: var(--primary-light); }
 
 .container {
-	max-width: 1180px;
+	max-width: 1320px;
 	margin: 0 auto;
 	padding: 0 20px;
 }
@@ -160,7 +160,10 @@ th, td { padding: 9px 10px; text-align: left; border-bottom: 1px solid var(--bor
 th { background: #f7f9fc; font-size: 12px; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); white-space: nowrap; }
 td.num, th.num { text-align: right; white-space: nowrap; }
 tbody tr:hover { background: #fafbfe; }
-.remark { font-size: 13px; color: var(--muted); min-width: 200px; }
+.remark { font-size: 13px; color: var(--muted); white-space: nowrap; }
+.col-honors { min-width: 120px; }
+.col-remediation { min-width: 160px; }
+#resultsTable th, #resultsTable td { padding: 9px 8px; }
 .nowrap { white-space: nowrap; }
 .simple-table td, .simple-table th { padding: 7px 8px; }
 
@@ -181,7 +184,7 @@ tbody tr:hover { background: #fafbfe; }
 
 .status-good-standing { background: var(--green-bg); color: var(--green); }
 .status-academic-warning { background: var(--amber-bg); color: var(--amber); }
-.status-probation { background: var(--orange-bg); color: var(--orange); }
+.status-conditional { background: var(--orange-bg); color: var(--orange); }
 .status-failed { background: var(--red-bg); color: var(--red); }
 
 .flag { color: var(--orange); font-weight: 600; }
@@ -223,19 +226,18 @@ tbody tr:hover { background: #fafbfe; }
 
 .search { max-width: 260px; }
 
-/* ---------- How it works ---------- */
-.stage-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
-.stage { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
-.stage .num {
-	width: 30px; height: 30px; border-radius: 50%;
-	background: var(--primary); color: #fff; font-weight: 700;
-	display: flex; align-items: center; justify-content: center;
-	margin-bottom: 10px;
+/* ---------- Code and CSV text ---------- */
+code { font-family: Consolas, "Courier New", monospace; font-size: 13px; background: #eef1f6; padding: 1px 6px; border-radius: 4px; }
+.csv-text {
+	font-family: Consolas, "Courier New", monospace;
+	font-size: 13px;
+	background: #f7f9fc;
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	padding: 14px 16px;
+	margin: 0;
+	overflow-x: auto;
 }
-.stage p { font-size: 14px; color: var(--muted); margin: 6px 0 10px; }
-code, .code { font-family: Consolas, "Courier New", monospace; font-size: 13px; background: #eef1f6; padding: 1px 6px; border-radius: 4px; }
-.flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 14px; }
-.flow span.box { background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 6px; padding: 6px 10px; }
 
 /* ---------- Footer ---------- */
 .footer { text-align: center; color: var(--muted); font-size: 13px; padding: 20px 0 30px; }
@@ -243,10 +245,10 @@ code, .code { font-family: Consolas, "Courier New", monospace; font-size: 13px; 
 /* ---------- Responsive ---------- */
 @media (max-width: 960px) {
 	.grid-main, .grid-2 { grid-template-columns: 1fr; }
-	.stats, .stage-grid { grid-template-columns: repeat(2, 1fr); }
+	.stats { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 520px) {
-	.stats, .stage-grid { grid-template-columns: 1fr; }
+	.stats { grid-template-columns: 1fr; }
 	.container { padding: 0 16px; }
 }
 

@@ -36,7 +36,7 @@ public class ReportGenerator {
 		Map<String, Integer> statusCounts = report.getStatusCounts();
 		statusCounts.put("Good Standing", 0);
 		statusCounts.put("Academic Warning", 0);
-		statusCounts.put("Probation", 0);
+		statusCounts.put("Conditional", 0);
 		statusCounts.put("Failed", 0);
 
 		report.setTotalStudents(students.size());
@@ -46,6 +46,7 @@ public class ReportGenerator {
 
 		double sum = 0;
 		int passed = 0;
+		int failed = 0;
 		Student highest = students.get(0);
 		Student lowest = students.get(0);
 
@@ -60,6 +61,9 @@ public class ReportGenerator {
 			}
 			if (s.isPassed()) {
 				passed++;
+			}
+			if (s.getLetterGrade().equals("F")) {
+				failed++;
 			}
 
 			distribution.put(s.getLetterGrade(), distribution.get(s.getLetterGrade()) + 1);
@@ -80,7 +84,7 @@ public class ReportGenerator {
 		report.setLowestAverage(lowest.getAverage());
 		report.setLowestName(lowest.getName());
 		report.setPassedCount(passed);
-		report.setFailedCount(total - passed);
+		report.setFailedCount(failed);
 		report.setPassRate(round(passed * 100.0 / total));
 
 		// rank students by average (highest first); tied averages share a rank

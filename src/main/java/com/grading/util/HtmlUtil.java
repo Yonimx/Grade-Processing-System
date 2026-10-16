@@ -31,6 +31,14 @@ public class HtmlUtil {
 		return String.format(Locale.US, "%.2f", value);
 	}
 
+	/** Shows a score without decimals when it is a whole number, e.g. 88.0 -> "88", 88.5 -> "88.50". */
+	public static String score(double value) {
+		if (value == Math.floor(value)) {
+			return String.valueOf((long) value);
+		}
+		return fmt(value);
+	}
+
 	/** CSS class for a letter grade badge, e.g. "B+" -> "grade-b". */
 	public static String gradeClass(String letter) {
 		return "grade-" + Character.toLowerCase(letter.charAt(0));

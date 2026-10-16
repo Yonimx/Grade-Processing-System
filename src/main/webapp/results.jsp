@@ -13,6 +13,11 @@
 	}
 
 	String classLetter = GradeEvaluator.toLetterGrade(report.getClassAverage());
+	String classGrade = GradeEvaluator.toNumericGrade(classLetter);
+	Map<String, Integer> statusCounts = report.getStatusCounts();
+	int conditionalCount = statusCounts.getOrDefault("Conditional", 0);
+	int failedCount = statusCounts.getOrDefault("Failed", 0);
+	int warningCount = statusCounts.getOrDefault("Academic Warning", 0);
 
 	// largest count, used to scale the bar charts
 	int maxGradeCount = 1;
@@ -62,12 +67,12 @@
 		<div class="stat">
 			<div class="label">Total Students</div>
 			<div class="value"><%= report.getTotalStudents() %></div>
-			<div class="sub"><%= report.getPassedCount() %> passed &middot; <%= report.getFailedCount() %> failed</div>
+			<div class="sub"><%= report.getPassedCount() %> passed &middot; <%= conditionalCount %> conditional &middot; <%= failedCount %> failed</div>
 		</div>
 		<div class="stat">
 			<div class="label">Class Average</div>
 			<div class="value"><%= HtmlUtil.fmt(report.getClassAverage()) %></div>
-			<div class="sub">Equivalent grade <span class="badge <%= HtmlUtil.gradeClass(classLetter) %>"><%= classLetter %></span></div>
+			<div class="sub">Equivalent grade <strong><%= classGrade %></strong> <span class="badge <%= HtmlUtil.gradeClass(classLetter) %>"><%= classLetter %></span></div>
 		</div>
 		<div class="stat">
 			<div class="label">Pass Rate</div>
@@ -95,9 +100,9 @@
 			<div class="sub">students flagged</div>
 		</div>
 		<div class="stat">
-			<div class="label">On Probation / Failed</div>
-			<div class="value"><%= report.getStatusCounts().get("Probation") + report.getStatusCounts().get("Failed") %></div>
-			<div class="sub"><%= report.getStatusCounts().get("Academic Warning") %> on academic warning</div>
+			<div class="label">Conditional / Failed</div>
+			<div class="value"><%= conditionalCount + failedCount %></div>
+			<div class="sub"><%= warningCount %> on academic warning</div>
 		</div>
 	</section>
 
@@ -108,7 +113,8 @@
 			<% for (Map.Entry<String, Integer> entry : report.getGradeDistribution().entrySet()) {
 				int width = entry.getValue() * 100 / maxGradeCount; %>
 			<div class="bar-row">
-				<span><span class="badge <%= HtmlUtil.gradeClass(entry.getKey()) %>"><%= entry.getKey() %></span></span>
+				<span><strong><%= GradeEvaluator.toNumericGrade(entry.getKey()) %></strong>
+					<span class="badge <%= HtmlUtil.gradeClass(entry.getKey()) %>"><%= entry.getKey() %></span></span>
 				<div class="bar-track"><div class="bar-fill <%= HtmlUtil.gradeClass(entry.getKey()) %>" style="width:<%= width %>%"></div></div>
 				<span class="bar-count"><%= entry.getValue() %></span>
 			</div>
@@ -125,7 +131,7 @@
 				<span class="bar-count"><%= entry.getValue() %></span>
 			</div>
 			<% } %>
-			<p class="hint">Passing mark: average of 60 (letter grade D) and above.</p>
+			<p class="hint">Passing grade: 3.00 (75%) and above. 4.00 is conditional.</p>
 		</div>
 	</section>
 
@@ -160,16 +166,17 @@
 						<td class="num"><%= s.getRank() %></td>
 						<td class="nowrap"><%= HtmlUtil.esc(s.getStudentId()) %></td>
 						<td class="nowrap"><strong><%= HtmlUtil.esc(s.getName()) %></strong></td>
-						<td class="num"><%= HtmlUtil.fmt(s.getQuiz()) %></td>
-						<td class="num"><%= HtmlUtil.fmt(s.getAssignment()) %></td>
-						<td class="num"><%= HtmlUtil.fmt(s.getMidterm()) %></td>
-						<td class="num"><%= HtmlUtil.fmt(s.getFinalExam()) %></td>
+						<td class="num"><%= HtmlUtil.score(s.getQuiz()) %></td>
+						<td class="num"><%= HtmlUtil.score(s.getAssignment()) %></td>
+						<td class="num"><%= HtmlUtil.score(s.getMidterm()) %></td>
+						<td class="num"><%= HtmlUtil.score(s.getFinalExam()) %></td>
 						<td class="num"><strong><%= HtmlUtil.fmt(s.getAverage()) %></strong></td>
-						<td><span class="badge <%= HtmlUtil.gradeClass(s.getLetterGrade()) %>"><%= s.getLetterGrade() %></span></td>
+						<td class="nowrap"><strong><%= s.getNumericGrade() %></strong>
+						<span class="badge <%= HtmlUtil.gradeClass(s.getLetterGrade()) %>"><%= s.getLetterGrade() %></span></td>
 						<td class="remark"><%= s.getRemark() %></td>
 						<td><span class="badge <%= HtmlUtil.statusClass(s.getStatus()) %>"><%= s.getStatus() %></span></td>
-						<td class="nowrap <%= s.isHonorsAwarded() ? "honor" : "muted" %>"><%= s.getHonors() %></td>
-						<td class="<%= s.isNeedsRemediation() ? "flag" : "muted" %>"><%= s.getRemediation() %></td>
+						<td class="col-honors <%= s.isHonorsAwarded() ? "honor" : "muted" %>"><%= s.getHonors() %></td>
+						<td class="col-remediation <%= s.isNeedsRemediation() ? "flag" : "muted" %>"><%= s.getRemediation() %></td>
 					</tr>
 					<% } %>
 				</tbody>
@@ -193,7 +200,7 @@
 					</span>
 					<span style="text-align:right">
 						<span class="honor"><%= s.getHonors() %></span><br>
-						<span class="detail"><%= HtmlUtil.fmt(s.getAverage()) %> (<%= s.getLetterGrade() %>)</span>
+						<span class="detail"><%= HtmlUtil.fmt(s.getAverage()) %> (<%= s.getNumericGrade() %> / <%= s.getLetterGrade() %>)</span>
 					</span>
 				</li>
 				<% } %>
@@ -216,7 +223,7 @@
 					</span>
 					<span style="text-align:right">
 						<span class="flag"><%= s.getRemediation() %></span><br>
-						<span class="detail"><%= HtmlUtil.fmt(s.getAverage()) %> (<%= s.getLetterGrade() %>)</span>
+						<span class="detail"><%= HtmlUtil.fmt(s.getAverage()) %> (<%= s.getNumericGrade() %> / <%= s.getLetterGrade() %>)</span>
 					</span>
 				</li>
 				<% } %>

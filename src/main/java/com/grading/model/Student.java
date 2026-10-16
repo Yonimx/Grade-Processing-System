@@ -8,7 +8,7 @@ import java.io.Serializable;
  */
 public class Student implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	// ---- Raw input (filled by RosterParser) ----
 	private String studentId;
@@ -21,6 +21,7 @@ public class Student implements Serializable {
 	// ---- Computed by GradeEvaluator ----
 	private double average;
 	private String letterGrade;
+	private String numericGrade;
 
 	// ---- Assigned by StatusRouter ----
 	private String remark;
@@ -42,9 +43,9 @@ public class Student implements Serializable {
 		this.finalExam = finalExam;
 	}
 
-	/** A student passes when the final letter grade is anything other than F. */
+	/** Passing is 75 (3.00 / C-) or higher. D (4.00) is conditional and F (5.00) is failed. */
 	public boolean isPassed() {
-		return letterGrade != null && !letterGrade.equals("F");
+		return letterGrade != null && !letterGrade.equals("D") && !letterGrade.equals("F");
 	}
 
 	/** The lowest of the four component scores. */
@@ -64,6 +65,9 @@ public class Student implements Serializable {
 
 	public String getLetterGrade() { return letterGrade; }
 	public void setLetterGrade(String letterGrade) { this.letterGrade = letterGrade; }
+
+	public String getNumericGrade() { return numericGrade; }
+	public void setNumericGrade(String numericGrade) { this.numericGrade = numericGrade; }
 
 	public String getRemark() { return remark; }
 	public void setRemark(String remark) { this.remark = remark; }

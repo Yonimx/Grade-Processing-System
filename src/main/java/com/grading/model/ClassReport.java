@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class ClassReport implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private String courseName;
 	private String generatedOn;
