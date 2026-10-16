@@ -16,6 +16,10 @@ RUN mkdir -p /usr/local/tomcat/webapps/ROOT/WEB-INF/classes \
       $(find /tmp/src -name "*.java") \
  && rm -rf /tmp/src
 
+# Turn off Tomcat's shutdown port (8005) so the web port is the only open port.
+# Otherwise Render may detect 8005 and send its health checks there.
+RUN sed -i 's/<Server port="8005"/<Server port="-1"/' /usr/local/tomcat/conf/server.xml
+
 # Keep memory use within small free hosting plans
 ENV CATALINA_OPTS="-XX:MaxRAMPercentage=70"
 
